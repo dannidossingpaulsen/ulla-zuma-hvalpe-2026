@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ulla og Zumas hvalpe 2026</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --bg: #f7f1e8;
+      --card: #fffaf4;
+      --text: #2f241d;
+      --muted: #7b6a5d;
+      --accent: #b86b35;
+      --accent-light: #ead1bd;
+      --line: #e3d5c7;
+      --shadow: 0 10px 30px rgba(55, 35, 20, 0.12);
+      --radius: 24px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .wrap {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    .hero {
+      margin: 24px auto 32px;
+      border-radius: 32px;
+      overflow: hidden;
+      min-height: 430px;
+      background-image:
+        linear-gradient(rgba(40, 25, 15, 0.25), rgba(40, 25, 15, 0.55)),
+        url("images/hero.jpg");
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      align-items: flex-end;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-content {
+      padding: 48px;
+      color: white;
+      max-width: 760px;
+    }
+
+    .eyebrow {
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      font-size: 0.78rem;
+      margin-bottom: 12px;
+      opacity: 0.9;
+    }
+
+    h1 {
+      font-size: clamp(2.4rem, 6vw, 5rem);
+      line-height: 0.95;
+      margin: 0 0 16px;
+      font-weight: 700;
+    }
+
+    .hero p {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 1.1rem;
+      line-height: 1.5;
+      margin: 0;
+      max-width: 620px;
+    }
+
+    section {
+      margin: 38px 0;
+    }
+
+    .section-title {
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      margin: 0 0 18px;
+      line-height: 1;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+    }
+
+    .stat-card,
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .stat-card {
+      padding: 22px;
+    }
+
+    .stat-label {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--muted);
+      font-size: 0.86rem;
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-size: 1.8rem;
+      font-weight: 700;
+    }
+
+    .chart-card {
+      padding: 22px;
+      height: 430px;
+    }
+
+    .table-card {
+      padding: 4px;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      min-width: 680px;
+    }
+
+    th,
+    td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    th {
+      color: var(--muted);
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      background: #fff5ea;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .milestones {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .milestone {
+      padding: 18px;
+      border-radius: 20px;
+      background: var(--card);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      min-height: 120px;
+    }
+
+    .milestone-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 12px;
+      background: #eee1d5;
+      color: var(--muted);
+      font-family: system-ui, sans-serif;
+      font-weight: 800;
+    }
+
+    .milestone.done .milestone-icon {
+      background: var(--accent);
+      color: white;
+    }
+
+    .milestone-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .milestone-date {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .parents {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 22px;
+    }
+
+    .parent-card {
+      overflow: hidden;
+    }
+
+    .parent-card img {
+      width: 100%;
+      height: 360px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .parent-info {
+      padding: 18px 22px 22px;
+    }
+
+    .parent-info h3 {
+      margin: 0 0 4px;
+      font-size: 1.7rem;
+    }
+
+    .parent-info p {
+      margin: 0;
+      color: var(--muted);
+      font-family: system-ui, sans-serif;
+    }
+
+    .puppies {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 18px;
+    }
+
+    .puppy-card {
+      padding: 18px;
+      text-align: center;
+    }
+
+    .puppy-card img {
+      width: 118px;
+      height: 118px;
+      border-radius: 999px;
+      object-fit: cover;
+      display: block;
+      margin: 0 auto 14px;
+      border: 5px solid #fff;
+      box-shadow: 0 8px 22px rgba(55, 35, 20, 0.18);
+    }
+
+    .puppy-card h3 {
+      margin: 0 0 4px;
+      font-size: 1.45rem;
+    }
+
+    .puppy-meta {
+      color: var(--muted);
+      font-family: system-ui, sans-serif;
+      font-size: 0.92rem;
+      min-height: 42px;
+    }
+
+    .puppy-weight {
+      margin-top: 14px;
+      font-size: 1.4rem;
+      font-weight: 700;
+    }
+
+    .puppy-gain {
+      margin-top: 4px;
+      color: var(--accent);
+      font-family: system-ui, sans-serif;
+      font-size: 0.92rem;
+      font-weight: 700;
+    }
+
+    footer {
+      color: var(--muted);
+      text-align: center;
+      padding: 36px 0 48px;
+      font-family: system-ui, sans-serif;
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 900px) {
+      .stats,
+      .milestones,
+      .puppies {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .parents {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        min-height: 360px;
+      }
+
+      .hero-content {
+        padding: 32px;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .stats,
+      .milestones,
+      .puppies {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        border-radius: 22px;
+        min-height: 420px;
+      }
+
+      .hero-content {
+        padding: 26px;
+      }
+
+      .chart-card {
+        height: 360px;
+      }
+
+      .parent-card img {
+        height: 300px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="wrap">
+    <header class="hero">
+      <div class="hero-content">
+        <div class="eyebrow">Bichon Havanais · Født 15. juni 2026</div>
+        <h1>Ulla og Zumas hvalpe 2026</h1>
+        <p>Følg kuldets udvikling, daglige vejninger og de vigtigste milepæle i hvalpenes første uger.</p>
+      </div>
+    </header>
+
+    <section class="stats">
+      <div class="stat-card">
+        <div class="stat-label">Alder</div>
+        <div class="stat-value" id="ageBox">–</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Antal hvalpe</div>
+        <div class="stat-value">5</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Største hvalp</div>
+        <div class="stat-value" id="largestBox">–</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Seneste vejning</div>
+        <div class="stat-value" id="latestDateBox">–</div>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="section-title">Vægtudvikling</h2>
+      <div class="card chart-card">
+        <canvas id="weightChart"></canvas>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="section-title">Vægttabel</h2>
+      <div class="card table-card">
+        <table id="weightTable"></table>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="section-title">Milepæle</h2>
+      <div class="milestones" id="milestones"></div>
+    </section>
+
+    <section>
+      <h2 class="section-title">Ulla og Zuma</h2>
+      <div class="parents">
+        <article class="card parent-card">
+          <img src="images/ulla.jpg" alt="Ulla" />
+          <div class="parent-info">
+            <h3>Ulla</h3>
+            <p>Mor</p>
+          </div>
+        </article>
+        <article class="card parent-card">
+          <img src="images/zuma.jpg" alt="Zuma" />
+          <div class="parent-info">
+            <h3>Zuma</h3>
+            <p>Far</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="section-title">Hvalpene</h2>
+      <div class="puppies" id="puppyCards"></div>
+    </section>
+  </main>
+
+  <footer>
+    Ulla og Zumas hvalpe 2026
+  </footer>
+
+  <script>
+    const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/1HWlTv-l1iyPDOsPtygookdxnMoW-6LjSLQV-ZDdNhfs/export?format=csv";
+
+    const birthDate = new Date("2026-06-15T00:00:00");
+
+    const puppies = [
+      { name: "Vilje", sex: "Tæve", color: "Sort med hvidt bryst", image: "images/vilje.jpg" },
+      { name: "Lulu", sex: "Tæve", color: "Sortbrun", image: "images/lulu.jpg" },
+      { name: "Luna", sex: "Tæve", color: "Hvid med brune aftegninger", image: "images/luna.jpg" },
+      { name: "Laban", sex: "Han", color: "Hvid med sorte aftegninger", image: "images/laban.jpg" },
+      { name: "Taco", sex: "Han", color: "Hvid med brune aftegninger", image: "images/taco.jpg" }
+    ];
+
+    const milestones = [
+      { title: "Født", done: true, date: "15/6-26" },
+      { title: "Øjne åbner", done: false, date: "" },
+      { title: "Fast føde for første gang", done: false, date: "" },
+      { title: "Første tur udenfor", done: false, date: "" },
+      { title: "Første gåtur", done: false, date: "" },
+      { title: "Sundhedstjek og vaccination", done: false, date: "" },
+      { title: "Klar til nye hjem", done: false, date: "" }
+    ];
+
+    function parseCSV(text) {
+      const rows = text.trim().split(/\r?\n/);
+      return rows.map(row => row.split(",").map(cell => cell.trim()));
+    }
+
+    function parseDanishDate(value) {
+      const parts = value.split("-");
+      if (parts.length !== 3) return null;
+      const [day, month, year] = parts.map(Number);
+      return new Date(year, month - 1, day);
+    }
+
+    function formatDateShort(value) {
+      const date = parseDanishDate(value);
+      if (!date) return value;
+      return date.toLocaleDateString("da-DK", {
+        day: "numeric",
+        month: "numeric",
+        year: "2-digit"
+      });
+    }
+
+    function getAgeText() {
+      const today = new Date();
+      const diff = Math.floor((today - birthDate) / (1000 * 60 * 60 * 24));
+      if (diff < 0) return "0 dage";
+      if (diff === 1) return "1 dag";
+      return `${diff} dage`;
+    }
+
+    function renderMilestones() {
+      const container = document.getElementById("milestones");
+      container.innerHTML = milestones.map(item => `
+        <article class="milestone ${item.done ? "done" : ""}">
+          <div class="milestone-icon">${item.done ? "✓" : ""}</div>
+          <div class="milestone-title">${item.title}</div>
+          <div class="milestone-date">${item.date || "Dato kommer"}</div>
+        </article>
+      `).join("");
+    }
+
+    function renderTable(headers, dataRows) {
+      const table = document.getElementById("weightTable");
+
+      const thead = `
+        <thead>
+          <tr>
+            ${headers.map(h => `<th>${h}</th>`).join("")}
+          </tr>
+        </thead>
+      `;
+
+      const tbody = `
+        <tbody>
+          ${dataRows.map(row => `
+            <tr>
+              ${row.map((cell, index) => `<td>${index === 0 ? formatDateShort(cell) : cell + " g"}</td>`).join("")}
+            </tr>
+          `).join("")}
+        </tbody>
+      `;
+
+      table.innerHTML = thead + tbody;
+    }
+
+    function renderPuppyCards(headers, dataRows) {
+      const latest = dataRows[dataRows.length - 1];
+      const previous = dataRows.length > 1 ? dataRows[dataRows.length - 2] : null;
+
+      const container = document.getElementById("puppyCards");
+
+      container.innerHTML = puppies.map(puppy => {
+        const index = headers.indexOf(puppy.name);
+        const latestWeight = latest[index];
+        const previousWeight = previous ? previous[index] : null;
+        const gain = previousWeight ? Number(latestWeight) - Number(previousWeight) : null;
+
+        return `
+          <article class="card puppy-card">
+            <img src="${puppy.image}" alt="${puppy.name}" />
+            <h3>${puppy.name}</h3>
+            <div class="puppy-meta">${puppy.sex}<br>${puppy.color}</div>
+            <div class="puppy-weight">${latestWeight} g</div>
+            <div class="puppy-gain">${gain === null ? "" : `${gain >= 0 ? "+" : ""}${gain} g siden sidst`}</div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function renderStats(headers, dataRows) {
+      const latest = dataRows[dataRows.length - 1];
+
+      let largest = { name: "", weight: -Infinity };
+
+      puppies.forEach(puppy => {
+        const index = headers.indexOf(puppy.name);
+        const weight = Number(latest[index]);
+        if (weight > largest.weight) {
+          largest = { name: puppy.name, weight };
+        }
+      });
+
+      document.getElementById("ageBox").textContent = getAgeText();
+      document.getElementById("largestBox").textContent = `${largest.name} · ${largest.weight} g`;
+      document.getElementById("latestDateBox").textContent = formatDateShort(latest[0]);
+    }
+
+    function renderChart(headers, dataRows) {
+      const labels = dataRows.map(row => formatDateShort(row[0]));
+
+      const datasets = puppies.map(puppy => {
+        const index = headers.indexOf(puppy.name);
+        return {
+          label: puppy.name,
+          data: dataRows.map(row => Number(row[index])),
+          tension: 0.35,
+          borderWidth: 3,
+          pointRadius: 4
+        };
+      });
+
+      const ctx = document.getElementById("weightChart");
+
+      new Chart(ctx, {
+        type: "line",
+        data: {
+          labels,
+          datasets
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: "bottom",
+              labels: {
+                usePointStyle: true,
+                font: {
+                  size: 13
+                }
+              }
+            }
+          },
+          scales: {
+            y: {
+              title: {
+                display: true,
+                text: "Gram"
+              }
+            }
+          }
+        }
+      });
+    }
+
+    async function init() {
+      renderMilestones();
+
+      try {
+        const response = await fetch(SHEET_CSV_URL);
+        const text = await response.text();
+        const rows = parseCSV(text);
+
+        const headers = rows[0];
+        const dataRows = rows.slice(1).filter(row => row.length >= 6 && row[0]);
+
+        renderStats(headers, dataRows);
+        renderChart(headers, dataRows);
+        renderTable(headers, dataRows);
+        renderPuppyCards(headers, dataRows);
+      } catch (error) {
+        console.error(error);
+        document.body.insertAdjacentHTML("beforeend", `
+          <div style="max-width: 900px; margin: 40px auto; padding: 24px; background: white; border-radius: 16px;">
+            Kunne ikke hente vægtdata fra Google Sheet.
+          </div>
+        `);
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>
