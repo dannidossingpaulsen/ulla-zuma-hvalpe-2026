@@ -283,6 +283,16 @@
       font-family: system-ui, sans-serif;
     }
 
+    .error-box {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 24px;
+      background: white;
+      border-radius: 16px;
+      font-family: system-ui, sans-serif;
+      color: #7a2e1f;
+    }
+
     footer {
       color: var(--muted);
       text-align: center;
@@ -404,7 +414,7 @@
   </footer>
 
   <script>
-    const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/1HWlTv-l1iyPDOsPtygookdxnMoW-6LjSLQV-ZDdNhfs/export?format=csv";
+    const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRGBTgoqsTlksm2FoAmkF2yXO9mnuStkK8ECqF_Hf9kA_Trvkqs4LGZKLgOX3nJFm7ioq6sY7z1PEvS/pub?output=csv";
 
     const birthDate = new Date("2026-06-15T00:00:00");
 
@@ -426,21 +436,91 @@
       { title: "Klar til nye hjem", done: false, date: "" }
     ];
 
+    function detectDelimiter(line) {
+      const comma = (line.match(/,/g) || []).length;
+      const semicolon = (line.match(/;/g) || []).length;
+      const tab = (line.match(/\t/g) || []).length;
+
+      if (semicolon >= comma && semicolon >= tab) return ";";
+      if (tab >= comma && tab >= semicolon) return "\t";
+      return ",";
+    }
+
     function parseCSV(text) {
-      const rows = text.trim().split(/\r?\n/);
-      return rows.map(row => row.split(",").map(cell => cell.trim()));
+      const cleanText = text.trim();
+      const lines = cleanText.split(/\r?\n/).filter(Boolean);
+      if (!lines.length) return [];
+
+      const delimiter = detectDelimiter(lines[0]);
+
+      return lines.map(line => {
+        const cells = [];
+        let current = "";
+        let inQuotes = false;
+
+        for (let i = 0; i < line.length; i++) {
+          const char = line[i];
+          const next = line[i + 1];
+
+          if (char === '"' && next === '"') {
+            current += '"';
+            i++;
+          } else if (char === '"') {
+            inQuotes = !inQuotes;
+          } else if (char === delimiter && !inQuotes) {
+            cells.push(current.trim());
+            current = "";
+          } else {
+            current += char;
+          }
+        }
+
+        cells.push(current.trim());
+
+        return cells.map(cell => cell.replace(/^"|"$/g, ""));
+      });
     }
 
     function parseDanishDate(value) {
-      const parts = value.split("-");
-      if (parts.length !== 3) return null;
-      const [day, month, year] = parts.map(Number);
-      return new Date(year, month - 1, day);
+      if (!value) return null;
+
+      const normalized = String(value).trim();
+
+      if (normalized.includes("-")) {
+        const parts = normalized.split("-");
+        if (parts.length === 3) {
+          const [day, month, year] = parts.map(Number);
+          return new Date(year, month - 1, day);
+        }
+      }
+
+      if (normalized.includes(".")) {
+        const parts = normalized.split(".").filter(Boolean);
+        if (parts.length >= 2) {
+          const day = Number(parts[0]);
+          const month = Number(parts[1]);
+          const year = parts[2] ? Number(parts[2]) : 2026;
+          return new Date(year, month - 1, day);
+        }
+      }
+
+      if (normalized.includes("/")) {
+        const parts = normalized.split("/");
+        if (parts.length >= 2) {
+          const day = Number(parts[0]);
+          const month = Number(parts[1]);
+          const year = parts[2] ? Number(parts[2]) : 2026;
+          return new Date(year, month - 1, day);
+        }
+      }
+
+      return null;
     }
 
     function formatDateShort(value) {
       const date = parseDanishDate(value);
-      if (!date) return value;
+      if (!date || isNaN(date)) return value;
+
       return date.toLocaleDateString("da-DK", {
         day: "numeric",
         month: "long"
@@ -453,6 +533,11 @@
       if (diff < 0) return "0 dage";
       if (diff === 1) return "1 dag";
       return `${diff} dage`;
+    }
+
+    function toNumber(value) {
+      if (value === undefined || value === null) return NaN;
+      return Number(String(value).replace(",", ".").replace(/[^\d.-]/g, ""));
     }
 
     function renderMilestones() {
@@ -495,7 +580,7 @@
         const index = headers.indexOf(puppy.name);
         const latestWeight = latest[index];
         const previousWeight = previous ? previous[index] : null;
-        const gain = previousWeight ? Number(latestWeight) - Number(previousWeight) : null;
+        const gain = previousWeight ? toNumber(latestWeight) - toNumber(previousWeight) : null;
 
         return `
           <article class="card puppy-card">
@@ -504,7 +589,7 @@
             <h3>${puppy.name}</h3>
             <div class="puppy-meta">${puppy.sex}<br>${puppy.color}</div>
             <div class="puppy-weight">${latestWeight} g</div>
-            <div class="puppy-gain">${gain === null ? "" : `${gain >= 0 ? "+" : ""}${gain} g siden sidst`}</div>
+            <div class="puppy-gain">${gain === null || isNaN(gain) ? "" : `${gain >= 0 ? "+" : ""}${gain} g siden sidst`}</div>
           </article>
         `;
       }).join("");
@@ -517,7 +602,7 @@
 
       puppies.forEach(puppy => {
         const index = headers.indexOf(puppy.name);
-        const weight = Number(latest[index]);
+        const weight = toNumber(latest[index]);
         if (weight > largest.weight) {
           largest = { name: puppy.name, weight };
         }
@@ -535,7 +620,7 @@
         const index = headers.indexOf(puppy.name);
         return {
           label: puppy.name,
-          data: dataRows.map(row => Number(row[index])),
+          data: dataRows.map(row => toNumber(row[index])),
           tension: 0.35,
           borderWidth: 3,
           pointRadius: 4
@@ -575,22 +660,33 @@
       renderMilestones();
 
       try {
-        const response = await fetch(SHEET_CSV_URL);
+        const response = await fetch(SHEET_CSV_URL + "&cacheBust=" + Date.now());
+        if (!response.ok) throw new Error("Google Sheet kunne ikke hentes");
+
         const text = await response.text();
         const rows = parseCSV(text);
 
-        const headers = rows[0];
+        if (!rows.length) throw new Error("CSV er tom");
+
+        const headers = rows[0].map(h => h.trim());
         const dataRows = rows.slice(1).filter(row => row.length >= 6 && row[0]);
+
+        if (!dataRows.length) {
+          throw new Error("Ingen gyldige datarækker fundet");
+        }
 
         renderStats(headers, dataRows);
         renderPuppyCards(headers, dataRows);
         renderChart(headers, dataRows);
         renderTable(headers, dataRows);
+
       } catch (error) {
         console.error(error);
         document.body.insertAdjacentHTML("beforeend", `
-          <div style="max-width: 900px; margin: 40px auto; padding: 24px; background: white; border-radius: 16px;">
-            Kunne ikke hente vægtdata fra Google Sheet.
+          <div class="error-box">
+            Kunne ikke hente vægtdata fra Google Sheet. Tjek at arket er offentliggjort, og at kolonnerne hedder:
+            <br><br>
+            <strong>Dato, Vilje, Lulu, Luna, Laban, Taco</strong>
           </div>
         `);
       }
