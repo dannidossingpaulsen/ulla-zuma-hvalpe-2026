@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Ulla og Zumas hvalpe 2026</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   <style>
     :root {
       --bg: #f7f1e8;
@@ -12,15 +13,12 @@
       --text: #2f241d;
       --muted: #7b6a5d;
       --accent: #b86b35;
-      --accent-light: #ead1bd;
       --line: #e3d5c7;
       --shadow: 0 10px 30px rgba(55, 35, 20, 0.12);
       --radius: 24px;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -40,10 +38,12 @@
       overflow: hidden;
       min-height: 430px;
       background-image:
-        linear-gradient(rgba(40, 25, 15, 0.25), rgba(40, 25, 15, 0.55)),
+        linear-gradient(rgba(40, 25, 15, 0.22), rgba(40, 25, 15, 0.55)),
         url("images/hero.jpg");
-      background-size: cover;
-      background-position: center;
+      background-size: 105%;
+      background-position: center center;
+      background-repeat: no-repeat;
+      background-color: #d8c5b3;
       display: flex;
       align-items: flex-end;
       box-shadow: var(--shadow);
@@ -78,9 +78,7 @@
       max-width: 620px;
     }
 
-    section {
-      margin: 38px 0;
-    }
+    section { margin: 38px 0; }
 
     .section-title {
       font-size: clamp(1.8rem, 4vw, 3rem);
@@ -102,9 +100,7 @@
       box-shadow: var(--shadow);
     }
 
-    .stat-card {
-      padding: 22px;
-    }
+    .stat-card { padding: 22px; }
 
     .stat-label {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -115,6 +111,66 @@
 
     .stat-value {
       font-size: 1.8rem;
+      font-weight: 700;
+    }
+
+    .puppies {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 18px;
+    }
+
+    .puppy-card {
+      padding: 14px 14px 16px;
+      text-align: center;
+      position: relative;
+    }
+
+    .puppy-dot {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      width: 13px;
+      height: 13px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.12);
+    }
+
+    .puppy-card img {
+      width: 96px;
+      height: 96px;
+      border-radius: 999px;
+      object-fit: cover;
+      display: block;
+      margin: 0 auto 10px;
+      border: 4px solid #fff;
+      box-shadow: 0 8px 18px rgba(55, 35, 20, 0.16);
+    }
+
+    .puppy-card h3 {
+      margin: 0 0 3px;
+      font-size: 1.3rem;
+    }
+
+    .puppy-meta {
+      color: var(--muted);
+      font-family: system-ui, sans-serif;
+      font-size: 0.84rem;
+      line-height: 1.35;
+      min-height: 38px;
+    }
+
+    .puppy-weight {
+      margin-top: 10px;
+      font-size: 1.22rem;
+      font-weight: 700;
+    }
+
+    .puppy-gain {
+      margin-top: 3px;
+      color: var(--accent);
+      font-family: system-ui, sans-serif;
+      font-size: 0.84rem;
       font-weight: 700;
     }
 
@@ -135,8 +191,7 @@
       min-width: 680px;
     }
 
-    th,
-    td {
+    th, td {
       padding: 14px 16px;
       border-bottom: 1px solid var(--line);
       text-align: left;
@@ -151,9 +206,7 @@
       background: #fff5ea;
     }
 
-    tr:last-child td {
-      border-bottom: none;
-    }
+    tr:last-child td { border-bottom: none; }
 
     .milestones {
       display: grid;
@@ -195,7 +248,7 @@
     }
 
     .milestone-date {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-family: system-ui, sans-serif;
       color: var(--muted);
       font-size: 0.92rem;
     }
@@ -206,9 +259,7 @@
       gap: 22px;
     }
 
-    .parent-card {
-      overflow: hidden;
-    }
+    .parent-card { overflow: hidden; }
 
     .parent-card img {
       width: 100%;
@@ -232,54 +283,6 @@
       font-family: system-ui, sans-serif;
     }
 
-    .puppies {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 18px;
-    }
-
-    .puppy-card {
-      padding: 18px;
-      text-align: center;
-    }
-
-    .puppy-card img {
-      width: 118px;
-      height: 118px;
-      border-radius: 999px;
-      object-fit: cover;
-      display: block;
-      margin: 0 auto 14px;
-      border: 5px solid #fff;
-      box-shadow: 0 8px 22px rgba(55, 35, 20, 0.18);
-    }
-
-    .puppy-card h3 {
-      margin: 0 0 4px;
-      font-size: 1.45rem;
-    }
-
-    .puppy-meta {
-      color: var(--muted);
-      font-family: system-ui, sans-serif;
-      font-size: 0.92rem;
-      min-height: 42px;
-    }
-
-    .puppy-weight {
-      margin-top: 14px;
-      font-size: 1.4rem;
-      font-weight: 700;
-    }
-
-    .puppy-gain {
-      margin-top: 4px;
-      color: var(--accent);
-      font-family: system-ui, sans-serif;
-      font-size: 0.92rem;
-      font-weight: 700;
-    }
-
     footer {
       color: var(--muted);
       text-align: center;
@@ -289,29 +292,22 @@
     }
 
     @media (max-width: 900px) {
-      .stats,
-      .milestones,
-      .puppies {
+      .stats, .milestones, .puppies {
         grid-template-columns: repeat(2, 1fr);
       }
 
-      .parents {
-        grid-template-columns: 1fr;
-      }
+      .parents { grid-template-columns: 1fr; }
 
       .hero {
         min-height: 360px;
+        background-size: cover;
       }
 
-      .hero-content {
-        padding: 32px;
-      }
+      .hero-content { padding: 32px; }
     }
 
     @media (max-width: 560px) {
-      .stats,
-      .milestones,
-      .puppies {
+      .stats, .milestones, .puppies {
         grid-template-columns: 1fr;
       }
 
@@ -320,17 +316,11 @@
         min-height: 420px;
       }
 
-      .hero-content {
-        padding: 26px;
-      }
+      .hero-content { padding: 26px; }
 
-      .chart-card {
-        height: 360px;
-      }
+      .chart-card { height: 360px; }
 
-      .parent-card img {
-        height: 300px;
-      }
+      .parent-card img { height: 300px; }
     }
   </style>
 </head>
@@ -362,6 +352,11 @@
         <div class="stat-label">Seneste vejning</div>
         <div class="stat-value" id="latestDateBox">–</div>
       </div>
+    </section>
+
+    <section>
+      <h2 class="section-title">Hvalpene</h2>
+      <div class="puppies" id="puppyCards"></div>
     </section>
 
     <section>
@@ -402,11 +397,6 @@
         </article>
       </div>
     </section>
-
-    <section>
-      <h2 class="section-title">Hvalpene</h2>
-      <div class="puppies" id="puppyCards"></div>
-    </section>
   </main>
 
   <footer>
@@ -419,15 +409,15 @@
     const birthDate = new Date("2026-06-15T00:00:00");
 
     const puppies = [
-      { name: "Vilje", sex: "Tæve", color: "Sort med hvidt bryst", image: "images/vilje.jpg" },
-      { name: "Lulu", sex: "Tæve", color: "Sortbrun", image: "images/lulu.jpg" },
-      { name: "Luna", sex: "Tæve", color: "Hvid med brune aftegninger", image: "images/luna.jpg" },
-      { name: "Laban", sex: "Han", color: "Hvid med sorte aftegninger", image: "images/laban.jpg" },
-      { name: "Taco", sex: "Han", color: "Hvid med brune aftegninger", image: "images/taco.jpg" }
+      { name: "Vilje", sex: "Tæve", color: "Sort med hvidt bryst", image: "images/vilje.jpg", dot: "#222222" },
+      { name: "Lulu", sex: "Tæve", color: "Sortbrun", image: "images/lulu.jpg", dot: "#5a3320" },
+      { name: "Luna", sex: "Tæve", color: "Hvidbrun", image: "images/luna.jpg", dot: "#ead8bd" },
+      { name: "Laban", sex: "Han", color: "Sortbroget", image: "images/laban.jpg", dot: "#111111" },
+      { name: "Taco", sex: "Han", color: "Hvidbrun", image: "images/taco.jpg", dot: "#b46a34" }
     ];
 
     const milestones = [
-      { title: "Født", done: true, date: "15/6-26" },
+      { title: "Født", done: true, date: "15. juni 2026" },
       { title: "Øjne åbner", done: false, date: "" },
       { title: "Fast føde for første gang", done: false, date: "" },
       { title: "Første tur udenfor", done: false, date: "" },
@@ -453,8 +443,7 @@
       if (!date) return value;
       return date.toLocaleDateString("da-DK", {
         day: "numeric",
-        month: "numeric",
-        year: "2-digit"
+        month: "long"
       });
     }
 
@@ -480,15 +469,12 @@
     function renderTable(headers, dataRows) {
       const table = document.getElementById("weightTable");
 
-      const thead = `
+      table.innerHTML = `
         <thead>
           <tr>
             ${headers.map(h => `<th>${h}</th>`).join("")}
           </tr>
         </thead>
-      `;
-
-      const tbody = `
         <tbody>
           ${dataRows.map(row => `
             <tr>
@@ -497,8 +483,6 @@
           `).join("")}
         </tbody>
       `;
-
-      table.innerHTML = thead + tbody;
     }
 
     function renderPuppyCards(headers, dataRows) {
@@ -515,6 +499,7 @@
 
         return `
           <article class="card puppy-card">
+            <div class="puppy-dot" style="background:${puppy.dot}"></div>
             <img src="${puppy.image}" alt="${puppy.name}" />
             <h3>${puppy.name}</h3>
             <div class="puppy-meta">${puppy.sex}<br>${puppy.color}</div>
@@ -539,7 +524,7 @@
       });
 
       document.getElementById("ageBox").textContent = getAgeText();
-      document.getElementById("largestBox").textContent = `${largest.name} · ${largest.weight} g`;
+      document.getElementById("largestBox").textContent = `${largest.name} (${largest.weight} g)`;
       document.getElementById("latestDateBox").textContent = formatDateShort(latest[0]);
     }
 
@@ -561,10 +546,7 @@
 
       new Chart(ctx, {
         type: "line",
-        data: {
-          labels,
-          datasets
-        },
+        data: { labels, datasets },
         options: {
           responsive: true,
           maintainAspectRatio: false,
@@ -573,9 +555,7 @@
               position: "bottom",
               labels: {
                 usePointStyle: true,
-                font: {
-                  size: 13
-                }
+                font: { size: 13 }
               }
             }
           },
@@ -603,9 +583,9 @@
         const dataRows = rows.slice(1).filter(row => row.length >= 6 && row[0]);
 
         renderStats(headers, dataRows);
+        renderPuppyCards(headers, dataRows);
         renderChart(headers, dataRows);
         renderTable(headers, dataRows);
-        renderPuppyCards(headers, dataRows);
       } catch (error) {
         console.error(error);
         document.body.insertAdjacentHTML("beforeend", `
