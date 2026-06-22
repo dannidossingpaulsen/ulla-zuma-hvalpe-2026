@@ -174,6 +174,24 @@
       font-weight: 700;
     }
 
+    .puppy-reservation {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+  font-family: system-ui, sans-serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.puppy-reservation.reserved {
+  color: #c0392b;
+}
+
+.puppy-reservation.available {
+  color: #2e8b57;
+}
     .chart-card {
       padding: 22px;
       height: 430px;
@@ -425,12 +443,12 @@
     const birthDate = new Date("2026-06-15T00:00:00");
 
     const puppies = [
-      { name: "Vilje", sex: "Tæve", color: "Sort/hvid", image: "images/vilje.jpg", dot: "#222222" },
-      { name: "Lulu", sex: "Tæve", color: "Chokolade/hvid", image: "images/lulu.jpg", dot: "#5a3320" },
-      { name: "Luna", sex: "Tæve", color: "Brun/hvid", image: "images/luna.jpg", dot: "#ead8bd" },
-      { name: "Laban", sex: "Han", color: "Sort/hvid", image: "images/laban.jpg", dot: "#111111" },
-      { name: "Taco", sex: "Han", color: "Brun/hvid", image: "images/taco.jpg", dot: "#b46a34" }
-    ];
+  { name: "Vilje", sex: "Tæve", color: "Sort/hvid", image: "images/vilje.jpg", dot: "#222222", reserved: true },
+  { name: "Lulu", sex: "Tæve", color: "Chokolade/hvid", image: "images/lulu.jpg", dot: "#5a3320", reserved: false },
+  { name: "Luna", sex: "Tæve", color: "Brun/hvid", image: "images/luna.jpg", dot: "#ead8bd", reserved: true },
+  { name: "Laban", sex: "Han", color: "Sort/hvid", image: "images/laban.jpg", dot: "#111111", reserved: false },
+  { name: "Taco", sex: "Han", color: "Brun/hvid", image: "images/taco.jpg", dot: "#b46a34", reserved: false }
+];
 
     const milestones = [
       { title: "Født", done: true, date: "15. juni 2026" },
@@ -595,7 +613,13 @@
             <h3>${puppy.name}</h3>
             <div class="puppy-meta">${puppy.sex}<br>${puppy.color}</div>
             <div class="puppy-weight">${latestWeight} g</div>
-            <div class="puppy-gain">${gain === null || isNaN(gain) ? "" : `${gain >= 0 ? "+" : ""}${gain} g siden sidst`}</div>
+            <div class="puppy-gain">
+  ${gain === null || isNaN(gain) ? "" : `${gain >= 0 ? "+" : ""}${gain} g siden sidst`}
+</div>
+
+<div class="puppy-reservation ${puppy.reserved ? "reserved" : "available"}">
+  ${puppy.reserved ? "Reserveret" : "Ikke reserveret"}
+</div>
           </article>
         `;
       }).join("");
