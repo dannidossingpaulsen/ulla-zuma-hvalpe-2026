@@ -350,6 +350,9 @@
 
       .parent-card img { height: 300px; }
     }
+    #toggleTable:hover{
+    opacity:.9;
+}
   </style>
 </head>
 
@@ -576,24 +579,70 @@
     }
 
     function renderTable(headers, dataRows) {
-      const table = document.getElementById("weightTable");
 
-      table.innerHTML = `
-        <thead>
+  let showingAll = false;
+
+  const table = document.getElementById("weightTable");
+  const parent = table.parentElement;
+
+  // Undgå at knappen oprettes flere gange
+  if (!document.getElementById("toggleTable")) {
+
+    const button = document.createElement("button");
+    button.id = "toggleTable";
+    button.textContent = "Vis hele vægthistorikken";
+    button.style.margin = "0 0 18px";
+    button.style.padding = "10px 18px";
+    button.style.border = "none";
+    button.style.borderRadius = "10px";
+    button.style.background = "#b86b35";
+    button.style.color = "white";
+    button.style.cursor = "pointer";
+    button.style.fontWeight = "600";
+
+    parent.insertBefore(button, table);
+
+    button.onclick = () => {
+      showingAll = !showingAll;
+      button.textContent = showingAll
+        ? "Vis kun seneste 10"
+        : "Vis alle vejninger";
+
+      drawTable(showingAll);
+    };
+  }
+
+  function drawTable(showAll) {
+
+    const rows = showAll
+      ? dataRows
+      : dataRows.slice(-10);
+
+    table.innerHTML = `
+      <thead>
+        <tr>
+          ${headers.map(h => `<th>${h}</th>`).join("")}
+        </tr>
+      </thead>
+
+      <tbody>
+        ${rows.map(row => `
           <tr>
-            ${headers.map(h => `<th>${h}</th>`).join("")}
+            ${row.map((cell,index)=>
+              `<td>${
+                index===0
+                ? formatDateShort(cell)
+                : cell + " g"
+              }</td>`
+            ).join("")}
           </tr>
-        </thead>
-        <tbody>
-          ${dataRows.map(row => `
-            <tr>
-              ${row.map((cell, index) => `<td>${index === 0 ? formatDateShort(cell) : cell + " g"}</td>`).join("")}
-            </tr>
-          `).join("")}
-        </tbody>
-      `;
-    }
+        `).join("")}
+      </tbody>
+    `;
+  }
 
+  drawTable(false);
+}
     function renderPuppyCards(headers, dataRows) {
       const latest = dataRows[dataRows.length - 1];
       const previous = dataRows.length > 1 ? dataRows[dataRows.length - 2] : null;
